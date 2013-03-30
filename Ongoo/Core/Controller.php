@@ -77,7 +77,7 @@ abstract class Controller
      */
     public function redirect($to, $params = array())
     {
-        if( preg_match('#^http(s)?://#', $to) )
+        if (preg_match('#^http(s)?://#', $to))
         {
             return $this->app()->redirect($to);
         }
@@ -93,8 +93,6 @@ abstract class Controller
     {
         if ($condition)
         {
-            //throw new \RuntimeException('404');
-            //$this->app()->notFound();
             $this->app->abort(404, "Not found");
         }
         return;
@@ -172,7 +170,7 @@ abstract class Controller
 
     public function execute($action = 'index', $args = array())
     {
-        if( is_dir(dirname(dirname($this->getPathname())) . '/Views/' . $this->getName()) )
+        if (is_dir(dirname(dirname($this->getPathname())) . '/Views/' . $this->getName()))
         {
             $this->app['twig.loader.filesystem']->addPath(dirname(dirname($this->getPathname())) . '/Views/' . $this->getName(), 'self');
         }
@@ -198,14 +196,14 @@ abstract class Controller
                 $this->setView($action);
             }
 
-            if( !$this->app['twig.loader']->exists($this->getView()) )
+            if (!$this->app['twig.loader']->exists($this->getView()))
             {
                 $this->app['logger']->error("settting to @self/$action");
                 $this->setView("@self/$action");
             }
 
             $path = dirname($this->app['twig.loader']->getCacheKey($this->getView()));
-            if( is_dir($path) )
+            if (is_dir($path))
             {
                 $this->app['twig.loader.filesystem']->addPath($path, 'local');
             }
@@ -216,7 +214,6 @@ abstract class Controller
     public function render()
     {
         return $this->app['twig']->render($this->getView(), $this->getData());
-        //return $this->app['twig']->render('HomeController/helloSuccess.twig', array('name' => $name));
     }
 
     protected function getPathname()
@@ -263,15 +260,4 @@ abstract class Controller
     {
         return $this->data;
     }
-
-    public function setLayout($layout)
-    {
-        $this->layout = $layout . '.twig';
-    }
-
-    public function getLayout()
-    {
-        return $this->layout;
-    }
-
 }
