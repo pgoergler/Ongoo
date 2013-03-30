@@ -47,7 +47,7 @@ abstract class SingletonTask extends Task
         if (file_exists($this->lockFile))
         {
             $pid = file_get_contents($this->lockFile);
-            if( posix_kill($pid, SIGUSR1) )
+            if (posix_kill($pid, SIGUSR1))
             {
                 throw new \RuntimeException($this->getName() . " already started pid [$pid] in : " . $this->lockFile);
             }

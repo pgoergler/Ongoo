@@ -4,27 +4,27 @@ namespace Ongoo\Core;
 
 class Configuration
 {
+
     protected static $_instance = null;
-    
+
     protected function __construct()
     {
-        
+
     }
-    
+
     /**
      *
      * @return Configuration
      */
     public static function &getInstance()
     {
-        if( is_null(self::$_instance) )
+        if (is_null(self::$_instance))
         {
             $classname = get_called_class();
             self::$_instance = new $classname();
         }
         return self::$_instance;
     }
-
 
     protected $config = array();
 
