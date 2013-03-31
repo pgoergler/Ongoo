@@ -57,7 +57,7 @@ abstract class Controller
      *
      * @return \Apps\Secure\Models\SecureUser
      */
-    public function getUser()
+    public function getSecureUser()
     {
         return $this->app['session']->getGuardUser();
     }
