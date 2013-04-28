@@ -193,12 +193,12 @@ abstract class Controller
         {
             if ($this->getView() == null)
             {
-                $this->setView($action);
+                $this->setView("@self/$action");
             }
 
             if (!$this->app['twig.loader']->exists($this->getView()))
             {
-                $this->app['logger']->error("settting to @self/$action");
+                $this->app['logger']->error($this->getView() . " not exists settting to @self/$action");
                 $this->setView("@self/$action");
             }
 
@@ -224,9 +224,9 @@ abstract class Controller
 
     public function setView($action)
     {
-        if (preg_match('#(.*?)/(.*?)$#', $action, $m))
+        if (preg_match('#(.*)/(.*?)$#', $action, $m))
         {
-            $m[1] = preg_replace('#^./#', $this->getName() . '/', $m[1]);
+            $m[1] = preg_replace('#^./#', '@self/', $m[1]);
             $m[2] = preg_replace_callback('/^([A-Z])/', function($m)
                     {
                         return strtolower($m[1]);
@@ -234,7 +234,7 @@ abstract class Controller
             $view = $m[1] . DIRECTORY_SEPARATOR . $m[2];
         } else
         {
-            $view = $this->getName() . '/' . lcfirst($action);
+            $view = '@self/' . lcfirst($action);
         }
 
         $this->view = $view . 'Success.twig';
@@ -260,4 +260,5 @@ abstract class Controller
     {
         return $this->data;
     }
+
 }
