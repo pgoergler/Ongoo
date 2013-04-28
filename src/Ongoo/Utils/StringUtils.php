@@ -167,6 +167,10 @@ class StringUtils
     {
         if (is_null($flags))
         {
+            if (!defined('ENT_HTML401')) // PHP5.4
+            {
+                define('ENT_HTML401', 0);
+            }
             $flags = ENT_COMPAT | ENT_HTML401;
         }
         return htmlentities($string, $flags, 'UTF-8');
