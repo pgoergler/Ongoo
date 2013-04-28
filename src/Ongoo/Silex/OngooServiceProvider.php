@@ -19,6 +19,35 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
 
     public function register(Application $app)
     {
+        $app['error_handler'] = $app->protect(function($errno, $errstr, $errfile, $errline) use(&$app)
+                {
+
+                    switch ($errno)
+                    {
+                        case E_ERROR:
+                        case E_USER_ERROR:
+                            $app['logger']->error("[$errno] In $errfile at $errline : $errstr");
+                            break;
+                        case E_NOTICE:
+                        case E_USER_NOTICE:
+                            $app['logger']->notice("[$errno] In $errfile at $errline : $errstr");
+                            break;
+                        case E_WARNING:
+                        case E_USER_WARNING:
+                            $app['logger']->warning("[$errno] In $errfile at $errline : $errstr");
+                            break;
+                        case E_DEPRECATED:
+                            $app['logger']->info("[DEPRECATED] In $errfile at $errline : $errstr");
+                            break;
+                        case E_STRICT:
+                            $app['logger']->alert("[STRICT] In $errfile at $errline : $errstr");
+                            break;
+                        default:
+                            $app['logger']->critical("[$errno] In $errfile at $errline : $errstr");
+                            break;
+                    }
+                });
+
         $app['bundles.menu'] = array();
         $app['bundles'] = array();
 
@@ -34,7 +63,7 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
                         }
                     }
 
-                    if ($app->offsetExists('twig') && $app['twig'] )
+                    if ($app->offsetExists('twig') && $app['twig'])
                     {
                         $views = $bundlePath . '/Views';
                         if (is_dir($views))
@@ -45,7 +74,7 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
                                 $app['twig.loader.filesystem']->addPath($views, "main");
                             }
 
-                            if( $alias )
+                            if ($alias)
                             {
                                 $app['twig.loader.filesystem']->addPath($views, "$alias");
                             }
