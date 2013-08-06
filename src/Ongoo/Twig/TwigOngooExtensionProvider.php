@@ -47,43 +47,62 @@ class TwigOngooExtensionProvider implements \Silex\ServiceProviderInterface
                         }
                     }
 
-                    foreach( \Ongoo\Core\Configuration::getInstance()->get('Ongoo.web.js', array()) as $js )
+                    foreach (\Ongoo\Core\Configuration::getInstance()->get('Ongoo.web.js', array()) as $js)
                     {
                         $helper->js($js);
+                    }
+
+                    foreach (\Ongoo\Core\Configuration::getInstance()->get('Ongoo.web.link', array()) as $link)
+                    {
+                        $helper->addLink($link['rel'], $link['href'], $link['type'], isset($link['media']) ? $link['media'] : null);
                     }
 
                     return $helper;
                 });
 
         $twig = $app['twig'];
-        // $twig->addFunction('url_for', new \Twig_Function_Function('\url_for'), array('is_safe', 'html'));
-
-        $filter = new \Twig_SimpleFilter('json_decode', function ($string, $asArray = true) {
-            return json_decode($string, $asArray);
-        });
+        $twig->addFunction('url_for', new \Twig_Function_Function('\url_for'), array('is_safe', 'html'));
+        $filter = new \Twig_SimpleFilter('json_decode', function ($string, $asArray = true)
+                {
+                    return json_decode($string, $asArray);
+                });
         $twig->addFilter($filter);
 
-        $fct = new \Twig_SimpleFunction('include_stylesheets', function() use( &$app)
-                        {
-                            return $app['ongoo.helper.html']->include_stylessheets();
-                        }, array('is_safe' => array('html'))
+
+        $filter = new \Twig_SimpleFilter('startsWith', function ($string)
+                {
+                    $regex = str_replace('#', '\\#', $string);
+                    return preg_match("#^$regex#", $string);
+                });
+        $twig->addFilter($filter);
+        $filter = new \Twig_SimpleFilter('endsWith', function ($string)
+                {
+                    $regex = str_replace('#', '\\#', $string);
+                    return preg_match("#$regex$#", $string);
+                });
+        $twig->addFilter($filter);
+
+        $fct = new \Twig_SimpleFunction('include_stylesheets', function($path = 'css/') use( &$app)
+                {
+                    return $app['ongoo.helper.html']->include_stylessheets($path);
+                }, array('is_safe' => array('html'))
         );
 
         $twig->addFunction($fct);
 
 
-        $fct = new \Twig_SimpleFunction('include_javascripts', function() use( &$app)
-                        {
-                            return $app['ongoo.helper.html']->include_javascripts();
-                        }, array('is_safe' => array('html'))
+        $fct = new \Twig_SimpleFunction('include_javascripts', function($path = 'js/') use( &$app)
+                {
+                    return $app['ongoo.helper.html']->include_javascripts($path);
+                }, array('is_safe' => array('html'))
         );
         $twig->addFunction($fct);
 
 
         $fct = new \Twig_SimpleFunction('include_links', function() use( &$app)
-                        {
-                            return $app['ongoo.helper.html']->include_links();
-                        }, array('is_safe' => array('html'))
+                {
+                    return $app['ongoo.helper.html']->include_links();
+                }, array('is_safe' => array('html'))
         );
         $twig->addFunction($fct);
 
