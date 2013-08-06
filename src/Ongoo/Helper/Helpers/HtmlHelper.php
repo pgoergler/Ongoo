@@ -10,19 +10,11 @@ namespace Ongoo\Helper\Helpers
     {
 
         protected static $instance = null;
-        
         protected $root_url = null;
         protected $root_uri = null;
         protected $js = array();
         protected $css = array();
         protected $links = array();
-        
-        /*
-        public static function getInstance()
-        {
-            $app = \Ongoo\Core\Configuration::getInstance()->get('application');
-            return $app['ongoo.helper.html'];
-        }*/
 
         protected function buildRootUrl()
         {
@@ -36,7 +28,7 @@ namespace Ongoo\Helper\Helpers
                 $uri .= ':' . $ctx->getHttpsPort();
             }
 
-            return $uri;// . $ctx->getBaseUrl();
+            return $uri;
         }
 
         protected function buildRootUri($default = null)
@@ -57,11 +49,11 @@ namespace Ongoo\Helper\Helpers
             return $this->root_url;
         }
 
-        public function getRootUri()
+        public function getRootUri($default = null)
         {
             if (is_null($this->root_uri))
             {
-                $this->root_uri = $this->buildRootUri();
+                $this->root_uri = $this->buildRootUri($default);
             }
             return $this->root_uri;
         }
@@ -119,30 +111,39 @@ namespace Ongoo\Helper\Helpers
             return $this->links;
         }
 
-        public function include_stylessheets()
+        public function include_stylessheets($path = 'css/')
         {
+            if (!preg_match('#^.*/$#', $path))
+            {
+                $path .= '/';
+            }
+
             $str = '';
             foreach ($this->getCss() as $css)
             {
                 if (!preg_match('#^(http://|/)#', $css['href']))
                 {
-                    $css['href'] = ($this->getRootUri() ? $this->getRootUri() : '/') . 'css/' . $css['href'];
+                    $css['href'] = ($this->getRootUri() ? $this->getRootUri() : '/') . $path . $css['href'];
                 }
-                
+
                 $str .= '<link rel="' . $css['rel'] . '" type="' . $css['type'] . '" ' . (is_null($css['media']) ? '' : 'media="' . $css['media'] . '" ') . 'href="' . $css['href'] . '" />' . "\n";
             }
             return $str;
         }
 
-        public function include_javascripts()
+        public function include_javascripts($path = 'js/')
         {
+            if (!preg_match('#^.*/$#', $path))
+            {
+                $path .= '/';
+            }
             foreach ($this->getJs() as $js)
             {
                 if (!preg_match('#^(http://|/)#', $js['src']))
                 {
-                    $js['src'] = ($this->getRootUri() ? $this->getRootUri() : '/') . 'js/' . $js['src'];
+                    $js['src'] = ($this->getRootUri() ? $this->getRootUri() : '/') . $path . $js['src'];
                 }
-                
+
                 echo '<script type="' . $js['type'] . '" src="' . $js['src'] . '"></script>' . "\n";
             }
         }
@@ -161,67 +162,18 @@ namespace Ongoo\Helper\Helpers
 
 namespace
 {
+
     function include_stylessheets(\Silex\Application $app)
     {
-        if( !isset($app['ongoo.helper.html']) )
+        if (!isset($app['ongoo.helper.html']))
         {
             return;
         }
-        
+
         foreach ($app['ongoo.helper.html']->getCss() as $css)
         {
             echo '<link rel="' . $css['rel'] . '" type="' . $css['type'] . '" ' . (is_null($css['media']) ? '' : 'media="' . $css['media'] . '" ') . 'href="' . $css['href'] . '" />' . "\n";
         }
     }
-    
-    /*
-    function use_ressource($rel, $href, $type, $media = null)
-    {
-        \Ongoo\Helper\Helpers\HtmlHelper::getInstance()->addLink($rel, $href, $type, $media = null);
-    }
 
-    function use_javascript($js)
-    {
-        if (!preg_match('#.js$#', $js))
-        {
-            $js .= '.js';
-        }
-
-        \Ongoo\Helper\Helpers\HtmlHelper::getInstance()->js($js);
-    }
-
-    function use_stylesheet($css)
-    {
-        if (!preg_match('#.css$#', $css))
-        {
-            $css .= '.css';
-        }
-
-        \Ongoo\Helper\Helpers\HtmlHelper::getInstance()->css($css);
-    }
-
-    function include_stylessheets()
-    {
-        foreach (\Ongoo\Helper\Helpers\HtmlHelper::getInstance()->getCss() as $css)
-        {
-            echo '<link rel="' . $css['rel'] . '" type="' . $css['type'] . '" ' . (is_null($css['media']) ? '' : 'media="' . $css['media'] . '" ') . 'href="' . $css['href'] . '" />' . "\n";
-        }
-    }
-
-    function include_javascripts()
-    {
-        foreach (\Ongoo\Helper\Helpers\HtmlHelper::getInstance()->getJs() as $js)
-        {
-            echo '<script type="' . $js['type'] . '" src="' . $js['src'] . '"></script>' . "\n";
-        }
-    }
-
-    function include_links()
-    {
-        foreach (\Ongoo\Helper\Helpers\HtmlHelper::getInstance()->getLinks() as $link)
-        {
-            echo '<link rel="' . $link['rel'] . '" type="' . $link['type'] . '" ' . (is_null($link['media']) ? '' : 'media="' . $link['media'] . '" ') . 'href="' . $link['href'] . '" />' . "\n";
-        }
-    }
-    */
 }

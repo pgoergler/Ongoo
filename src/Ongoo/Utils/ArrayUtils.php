@@ -9,6 +9,7 @@ namespace Ongoo\Utils;
  */
 class ArrayUtils
 {
+
     public static function merge(array $configuration, $mode = 'all')
     {
         $cfg = isset($configuration['all']) ? $configuration['all'] : array();
@@ -19,7 +20,7 @@ class ArrayUtils
         }
         return $cfg;
     }
-    
+
     public static function merge_recursive_simple(array $a1, array $a2)
     {
         if (func_num_args() < 2)
@@ -86,6 +87,7 @@ class ArrayUtils
         }
         return $configuration;
     }
+
 }
 
 ?>

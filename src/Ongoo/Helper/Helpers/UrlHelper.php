@@ -8,11 +8,12 @@ namespace Ongoo\Helper\Helpers
 
     class UrlHelper extends Helper
     {
+
         public function url_for($name, $params = array())
         {
             return $this->app['url_generator']->generate($name, $params);
         }
-        
+
         public static function urlFor($name, $params = array())
         {
             $app = \Ongoo\Core\Configuration::getInstance()->get('application');
@@ -20,13 +21,15 @@ namespace Ongoo\Helper\Helpers
         }
 
     }
+
 }
 
 namespace
 {
+
     function url_for($name, $params = array())
     {
         return \Ongoo\Helper\Helpers\UrlHelper::urlFor($name, $params);
     }
-    
+
 }
