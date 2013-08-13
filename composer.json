@@ -1,5 +1,5 @@
 {
-    "name": "pgoergler/ongoo",
+    "name": "ongoo/ongoo",
     "type": "library",
     "description": "Set of tools for Silex",
     "keywords": ["silex", "tools", "ongoo"],
