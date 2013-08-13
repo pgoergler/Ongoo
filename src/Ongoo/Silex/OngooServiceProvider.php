@@ -58,7 +58,7 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
 
         $app['bundle.register'] = $app->protect(function($bundle, $mainBundle = false, $alias = null) use (&$app)
                 {
-                    $bundlePath = __W_APPS_DIR . '/' . $bundle;
+                    $bundlePath = $app['dir_apps'] . '/' . $bundle;
                     if ($app->offsetExists('bundle.include_routes') && $app['bundle.include_routes'])
                     {
                         $routes = $bundlePath . '/config/routes.php';
@@ -106,7 +106,7 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
                 {
                     if ($path == null)
                     {
-                        $path = __W_APPS_DIR . '/' . $bundle . '/config/menu.php';
+                        $path = $app['dir_apps'] . '/' . $bundle . '/config/menu.php';
                     }
 
                     if (file_exists($path))
