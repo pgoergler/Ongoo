@@ -6,7 +6,6 @@ abstract class Controller
 {
 
     protected $app = null;
-    protected $injector = null;
     protected $route = null;
     protected $data = array();
     protected $headers = array();
@@ -15,10 +14,9 @@ abstract class Controller
     protected $name = null;
     protected $request = null;
 
-    public function __construct(&$app, \Ongoo\Injector\DependencyInjector $injector = null)
+    public function __construct(&$app)
     {
         $this->app = $app;
-        $this->injector = $injector ? $injector : new \Ongoo\Injector\DependencyInjector();
     }
 
     public function initialize($route)
@@ -52,6 +50,15 @@ abstract class Controller
             return $_SERVER['TERM'];
         }
         return '0.0.0.0';
+    }
+
+    /**
+     *
+     * @return \Ongoo\Session\Session
+     */
+    public function getSession()
+    {
+        return $this->app['session'];
     }
 
     /**
