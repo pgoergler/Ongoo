@@ -19,6 +19,23 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
 
     public function register(Application $app)
     {
+        if (!$app->OffsetExists('application.mode'))
+        {
+            $app['application.mode'] = 'dev';
+        }
+        $databases = \Ongoo\Utils\ArrayUtils::merge(include(__CONFIG_DIR . '/databases.php'), $app['application.mode']);
+        $globalConfig = \Ongoo\Utils\ArrayUtils::merge(include(__CONFIG_DIR . '/config.php'), $app['application.mode']);
+        $loggers = \Ongoo\Utils\ArrayUtils::merge(include(__CONFIG_DIR . '/loggers.php'), $app['application.mode']);
+
+        $app['configuration'] = $app->share(function()
+                {
+                    return \Ongoo\Core\Configuration::getInstance();
+                });
+
+        $app['configuration']->load(array('Databases' => $databases));
+        $app['configuration']->append(array('Loggers' => $loggers), true);
+        $app['configuration']->append($globalConfig, true);
+
         $app['error_handler'] = $app->protect(function($errno, $errstr, $errfile, $errline) use(&$app)
                 {
                     if (!(error_reporting() & $errno))

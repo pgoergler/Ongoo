@@ -46,8 +46,7 @@ abstract class Task extends \Symfony\Component\Console\Command\Command
     {
         $this->initialize($input, $output);
         $app = $this->getApplication();
-        include $app['dir_bootstrap'] . '/configure.php';
-        include $app['dir_bootstrap'] . '/console_plugins.php';
+        include $app['dir_bootstrap'] . '/bootstrap_cli.php';
         $app->boot();
 
         $app['orm']->init($app['quartz.databases']);
