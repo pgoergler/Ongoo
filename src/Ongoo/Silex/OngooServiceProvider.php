@@ -140,4 +140,4 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
 
 }
 
-?>
+require_once('functions.php');
