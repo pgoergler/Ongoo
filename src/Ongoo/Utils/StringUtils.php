@@ -153,14 +153,73 @@ class StringUtils
         {
             // The 'G' modifier is available since PHP 5.1.0
             case 'g':
+            case 'gb':
                 $val *= 1024;
             case 'm':
+            case 'mb':
                 $val *= 1024;
             case 'k':
+            case 'kb':
                 $val *= 1024;
         }
 
         return $val;
+    }
+
+    /**
+     *
+     * @param int $bytes number of bytes
+     * @param string $unit GB|MB|KB|B|null
+     * @param string $format output result as "%size% %unit%"
+     * @return string
+     */
+    public static function bytesTo($bytes, $unit = null, $format = '%size% %unit%')
+    {
+        $methods = array(
+            'GB' => function($bytes)
+            {
+                return \decimal($bytes / 1073741824);
+            },
+            'MB' => function($bytes)
+            {
+                return \decimal($bytes / 1048576);
+            },
+            'KB' => function($bytes)
+            {
+                return \decimal($bytes / 1024);
+            },
+            'B' => function($bytes)
+            {
+                return $bytes;
+            },
+        );
+        $methods['auto'] = function($bytes)
+                {
+                    if ($bytes >= 1073741824)
+                    {
+                        return $methods['GB'];
+                    } elseif ($bytes >= 1048576)
+                    {
+                        return $methods['MB'];
+                    } elseif ($bytes >= 1024)
+                    {
+                        return $methods['KB'];
+                    } else
+                    {
+                        return $methods['B'];
+                    }
+                };
+
+        $key = is_null($unit) ? 'auto' : strtoupper($unit);
+        if( !array_key_exists($key, $methods) )
+        {
+            $key = 'auto';
+        }
+        $replace = array(
+            '%size%' => $methods[$key]($bytes),
+            '%unit%' => $unit,
+        );
+        return strtr($format, $replace);
     }
 
     public static function utf8htmlentities($string, $flags = null)
