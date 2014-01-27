@@ -201,7 +201,11 @@ abstract class Controller
         {
             if ($this->getView() == null)
             {
-                $this->setView("@self/$action");
+                $this->setView('@main/' . $this->getName() . "/$action");
+                if( !$this->app['twig.loader']->exists($this->getView()))
+                {
+                    $this->setView("@self/$action");
+                }
             }
 
             if (!$this->app['twig.loader']->exists($this->getView()))
