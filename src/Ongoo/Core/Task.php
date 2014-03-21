@@ -99,7 +99,7 @@ abstract class Task extends \Symfony\Component\Console\Command\Command
 
     protected function onFinish()
     {
-
+        $this->app['orm']->closeAll();
     }
 
     abstract protected function process(\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output);
