@@ -38,7 +38,7 @@ class Configuration
      */
     public function get($name, $default = null)
     {
-        return isset($this->config[$name]) ? $this->config[$name] : $default;
+        return $this->has($name) ? $this->config[$name] : $default;
     }
 
     /**
