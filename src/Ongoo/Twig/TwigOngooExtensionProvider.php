@@ -110,6 +110,40 @@ class TwigOngooExtensionProvider implements \Silex\ServiceProviderInterface
                 {
                     return $app['session']->getGuardUser();
                 });
+
+        $fct = new \Twig_SimpleFunction('ip', function() use( &$app)
+                {
+                    return \ip();
+                }, array('is_safe' => array('html'))
+        );
+        $twig->addFunction($fct);
+
+        $fct = new \Twig_SimpleFunction('me', function() use( &$app)
+                {
+                    return \me();
+                }, array('is_safe' => array('html'))
+        );
+        $twig->addFunction($fct);
+
+        $fct = new \Twig_SimpleFunction('whoami', function() use( &$app)
+                {
+                    return \whoami();
+                }, array('is_safe' => array('html'))
+        );
+        $twig->addFunction($fct);
+
+        $fct = new \Twig_SimpleFunction('now', function() use( &$app)
+                {
+                    return \now();
+                }, array('is_safe' => array('html'))
+        );
+        $twig->addFunction($fct);
+
+        $filter = new \Twig_SimpleFilter('decimal', function ($number)
+                {
+                    return \decimal($number);
+                });
+        $twig->addFilter($filter);
     }
 
 }
