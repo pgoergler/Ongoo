@@ -42,12 +42,24 @@ abstract class Task extends \Symfony\Component\Console\Command\Command
         $this->app['application.mode'] = $input->hasOption('env') ? $input->getOption('env') : 'dev';
     }
 
+    protected function beforeBoot(\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output)
+    {
+
+    }
+
+    protected function afterBoot(\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output)
+    {
+
+    }
+
     protected function bootstrap(\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output)
     {
         $this->initialize($input, $output);
         $app = $this->getApplication();
         include $app['dir_bootstrap'] . '/bootstrap_cli.php';
+        $this->beforeBoot($input, $output);
         $app->boot();
+        $this->afterBoot($input, $output);
 
         $app['orm']->init($app['quartz.databases']);
 
