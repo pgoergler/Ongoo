@@ -114,6 +114,12 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
                     {
                         $app['configuration']->append(\Ongoo\Utils\ArrayUtils::merge(include($configFile), $app['application.mode']), true);
                     }
+
+                    $bootstrapFile = $bundlePath . '/config/bootstrap.php';
+                    if (file_exists($bootstrapFile))
+                    {
+                        include $bootstrapFile;
+                    }
                     $bundles = $app['bundles'];
                     $bundles[$bundle] = true;
                     $app['bundles'] = $bundles;
