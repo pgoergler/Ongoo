@@ -81,16 +81,18 @@ namespace
      * @param Mixed $datetime
      * @return \DateTime
      */
-    function datetime($datetime)
+    function datetime($datetime, $timezone = null)
     {
         $dependencyInjection = \Ongoo\Core\Configuration::getInstance()->get('application');
         if (!$dependencyInjection->OffsetExists('to_datetime'))
         {
-            $dependencyInjection['to_datetime'] = $dependencyInjection->protect(function($datetime)
+            $dependencyInjection['to_datetime'] = $dependencyInjection->protect(function($datetime, $timezone = null)
                     {
+                        $timezone = is_null($timezone) ? null : ($timezone instanceof \DateTimeZone ? $timezone : new \DateTimeZone($timezone)); 
+                
                         if (is_string($datetime))
                         {
-                            return new \DateTime($datetime);
+                            return new \DateTime($datetime, $timezone);
                         } elseif ($datetime instanceof \DateTime)
                         {
                             return clone $datetime;
@@ -103,7 +105,7 @@ namespace
                         }
                     });
         }
-        return $dependencyInjection['to_datetime']($datetime);
+        return $dependencyInjection['to_datetime']($datetime, $timezone);
     }
 
     /**
