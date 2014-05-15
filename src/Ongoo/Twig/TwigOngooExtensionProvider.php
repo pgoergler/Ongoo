@@ -144,6 +144,11 @@ class TwigOngooExtensionProvider implements \Silex\ServiceProviderInterface
                     return \decimal($number);
                 });
         $twig->addFilter($filter);
+        $filter = new \Twig_SimpleFilter('interval', function ($number)
+                {
+                    return \Ongoo\Utils\StringUtils::secToTime($number);
+                });
+        $twig->addFilter($filter);
     }
 
 }
