@@ -90,8 +90,10 @@ class StringUtils
 
         if (function_exists('iconv'))
         {
+            $locale = setlocale(LC_ALL, 0);
             setlocale(LC_ALL, 'fr_FR');
             $string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+            setlocale(LC_ALL, $locale);
             if ($string !== false)
             {
                 return $string;
@@ -111,8 +113,10 @@ class StringUtils
         // transliterate
         if (function_exists('iconv'))
         {
+            $locale = setlocale(LC_ALL, 0);
             setlocale(LC_ALL, 'fr_FR');
             $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+            setlocale(LC_ALL, $locale);
         }
         // lowercase
         $text = strtolower($text);
