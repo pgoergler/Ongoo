@@ -129,6 +129,11 @@ namespace
     {
         return round($number, 2, PHP_ROUND_HALF_UP);
     }
+    
+    function ceilling($number, $significance = 1)
+    {
+        return ( is_numeric($number) && is_numeric($significance) ) ? (ceil($number / $significance) * $significance) : false;
+    }
 
     function trans($id, $values = array(), $domain = null, $locale = null)
     {
