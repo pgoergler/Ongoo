@@ -61,7 +61,10 @@ abstract class Task extends \Symfony\Component\Console\Command\Command
         $app->boot();
         $this->afterBoot($input, $output);
 
-        $app['orm']->init($app['quartz.databases']);
+        if( $app->offsetExists('orm'))
+        {
+            $app['orm']->init($app['quartz.databases']);
+        }
 
         $root = $app['logger.factory']->get('cli');
         $root->set('app', $this->getStrName());
@@ -111,7 +114,10 @@ abstract class Task extends \Symfony\Component\Console\Command\Command
 
     protected function onFinish()
     {
-        $this->app['orm']->closeAll();
+        if( $this->app->offsetExists('orm'))
+        {
+            $this->app['orm']->closeAll();
+        }
     }
 
     abstract protected function process(\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output);
