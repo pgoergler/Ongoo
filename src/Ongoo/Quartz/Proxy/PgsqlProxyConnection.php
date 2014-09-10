@@ -39,21 +39,28 @@ class PgsqlProxyConnection extends \Quartz\Connection\PgsqlConnection
     {
         if ($this->logger)
         {
-            $this->logger->debug($sQuery);
+            $logger = $this->logger;
+            $rows = preg_split("#\n#", $sQuery);
+            array_walk($rows, function(&$row) use($logger){
+                $row = \trim($row);
+            });
+            
+            $this->logger->debug(implode(' ', $rows));
         }
         return parent::query($sQuery, $unbuffered);
     }
 
-    public function insert(\Quartz\Object\Table $table, $object)
+    public function close()
     {
-        return parent::insert($table, $object);
+        if( $this->logger )
+        {
+            foreach( $this->transactions as $tr)
+            {
+                $this->logger->debug("rolling back transaction $tr");
+            }
+        }
+        parent::close();
     }
-
-    public function update($table, $query, $object, $options = array())
-    {
-        return parent::update($table, $query, $object, $options);
-    }
-
 }
 
 ?>
