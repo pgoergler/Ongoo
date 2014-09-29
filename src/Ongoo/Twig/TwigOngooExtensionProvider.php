@@ -149,6 +149,12 @@ class TwigOngooExtensionProvider implements \Silex\ServiceProviderInterface
                     return \Ongoo\Utils\StringUtils::secToTime($number);
                 });
         $twig->addFilter($filter);
+        
+        $filter = new \Twig_SimpleFilter('slugify', function ($text, $default = 'n-a')
+                {
+                    return \Ongoo\Utils\StringUtils::slugify($text, $default);
+                });
+        $twig->addFilter($filter);
     }
 
 }
