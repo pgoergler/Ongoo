@@ -178,9 +178,11 @@ abstract class Controller
 
     public function execute($action = 'index', $args = array())
     {
+        $oldSelfPath = null;
         if (is_dir(dirname(dirname($this->getPathname())) . '/Views/' . $this->getName()))
         {
-            $this->app['twig.loader.filesystem']->addPath(dirname(dirname($this->getPathname())) . '/Views/' . $this->getName(), 'self');
+            $oldSelfPath = $this->app['twig.loader.filesystem']->getPaths('self');
+            $this->app['twig.loader.filesystem']->setPaths(dirname(dirname($this->getPathname())) . '/Views/' . $this->getName(), 'self');
         }
 
         $this->preExecute($action);
@@ -217,10 +219,14 @@ abstract class Controller
             $path = dirname($this->app['twig.loader']->getCacheKey($this->getView()));
             if (is_dir($path))
             {
-                $this->app['twig.loader.filesystem']->addPath($path, 'local');
+                $this->app['twig.loader.filesystem']->setPaths($path, 'local');
             }
 
             $content = $this->render();
+            if( $oldSelfPath )
+            {
+                $this->app['twig.loader.filesystem']->setPaths($oldSelfPath, 'self');
+            }
             return new \Symfony\Component\HttpFoundation\Response($content, 200, $this->headers);
         }
     }
