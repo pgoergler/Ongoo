@@ -91,6 +91,21 @@ abstract class Controller
         }
         return $this->app()->redirect(url_for($to, $params));
     }
+    
+    public function forwardCodeUnless($code, $condition, $message = "error")
+    {
+        $this->forwardCode($code, !$condition, $message);
+    }
+
+    public function forwardCode($code, $condition, $message = "error")
+    {
+        if ($condition)
+        {
+            $this->app['logger']->error("aborting due to {0} {1}", array($code, $message));
+            $this->app->abort($code, $message);
+        }
+        return;
+    }
 
     public function forward404Unless($condition)
     {
