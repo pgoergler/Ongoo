@@ -39,27 +39,15 @@ class MysqliProxyConnection extends \Quartz\Connection\MysqliConnection
     {
         if ($this->logger)
         {
-            $this->logger->debug($sQuery);
+            $logger = $this->logger;
+            $rows = preg_split("#\n#", $sQuery);
+            array_walk($rows, function(&$row) use($logger){
+                $row = \trim($row);
+            });
+            
+            $this->logger->debug(implode(' ', $rows));
         }
         return parent::query($sQuery, $unbuffered);
-    }
-
-    public function insert(\Quartz\Object\Table $table, $object)
-    {
-        if ($this->logger)
-        {
-            $this->logger->debug($sQuery);
-        }
-        return parent::insert($table, $object);
-    }
-
-    public function update($table, $query, $object, $options = array())
-    {
-        if ($this->logger)
-        {
-            $this->logger->debug($sQuery);
-        }
-        return parent::update($table, $query, $object, $options);
     }
 
 }
