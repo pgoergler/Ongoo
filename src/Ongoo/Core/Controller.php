@@ -280,13 +280,13 @@ abstract class Controller
         return $this->view;
     }
 
-    protected function set($name, $value)
+    public function set($name, $value)
     {
         $this->data[$name] = $value;
         return $this;
     }
 
-    protected function get($name)
+    public function get($name)
     {
         return isset($this->data[$name]) ? $this->data[$name] : null;
     }
