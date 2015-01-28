@@ -148,6 +148,8 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
                         echo $path;
                     }
                 });
+                
+        \OngooUtils\OngooUtils::getInstance()->setInjector($app);
     }
 
 }
