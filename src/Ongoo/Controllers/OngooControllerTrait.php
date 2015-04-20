@@ -10,6 +10,8 @@ namespace Ongoo\Controllers;
 trait OngooControllerTrait
 {
 
+    protected $flashes = array();
+    
     public function timzeonePreExecute($action)
     {
         parent::preExecute($action);
@@ -40,10 +42,19 @@ trait OngooControllerTrait
         }
         return null;
     }
+    
+    public function getFlashes()
+    {
+        return $this->flashes;
+    }
 
     public function flash($message, $class = 'danger', $id = null)
     {
         $id = is_null($id) ? \Ongoo\Utils\StringUtils::slugify($message) : $id;
+        $this->flashes[$id] = array(
+            'class' => $class,
+            'text' => $message
+        );
         $this->app['session']->getFlashBag()->add($class, array('id' => $id, 'text' => $message));
         return $this;
     }
