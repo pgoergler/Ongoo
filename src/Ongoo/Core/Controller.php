@@ -285,6 +285,15 @@ abstract class Controller
         $this->data[$name] = $value;
         return $this;
     }
+    
+    public function remove($name)
+    {
+        if(array_key_exists($name, $this->data))
+        {
+            unset($this->data[$name]);
+        }
+        return $this;
+    }
 
     public function get($name)
     {
