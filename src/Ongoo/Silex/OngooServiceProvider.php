@@ -18,6 +18,10 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
         {
             set_error_handler($app['error_handler']);
         }
+        
+        $app['resolver'] = $app->extend('resolver', function ($resolver, $app) {
+            return new \Ongoo\Controllers\ControllerResolver($app, $resolver, new \Ongoo\Controllers\CallbackResolver($app));
+        });
     }
 
     public function register(Application $app)
