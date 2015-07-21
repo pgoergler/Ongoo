@@ -33,8 +33,13 @@ class CallbackResolver extends \Silex\CallbackResolver
     {
         if ((is_string($name) && (false !== strpos($name, '::'))))
         {
-            list($class, $method) = explode('::', $name, 2);
-            return class_exists($class);
+            list($service, $method) = explode('::', $name, 2);
+            
+            if( isset($this->app[$service]) )
+            {
+                return $this->app[$service];
+            }
+            return \class_exists($service);
         }
         return false;
     }
@@ -50,8 +55,13 @@ class CallbackResolver extends \Silex\CallbackResolver
      */
     public function convertCallback($name)
     {
-        list($class, $method) = explode('::', $name, 2);
-        return array($class, 'execute', $method);
+        list($service, $method) = explode('::', $name, 2);
+        if( isset($this->app[$service]) )
+        {
+            $service = $this->app[$service];
+        }
+        
+        return array($service, 'execute', $method);
     }
 
 }
