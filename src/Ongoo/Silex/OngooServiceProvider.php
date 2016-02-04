@@ -91,7 +91,7 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
                         $routes = $bundlePath . '/config/routes.php';
                         if (is_file($routes))
                         {
-                            include $routes;
+                            include_once($routes);
                         }
                     }
 
@@ -122,7 +122,7 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
                     $bootstrapFile = $bundlePath . '/config/bootstrap.php';
                     if (file_exists($bootstrapFile))
                     {
-                        include $bootstrapFile;
+                        include_once($bootstrapFile);
                     }
                     $bundles = $app['bundles'];
                     $bundles[$bundle] = true;
