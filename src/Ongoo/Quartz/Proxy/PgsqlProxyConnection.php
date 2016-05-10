@@ -50,7 +50,7 @@ class PgsqlProxyConnection extends \Quartz\Connection\PgsqlConnection
         return parent::query($sQuery, $unbuffered);
     }
 
-    public function close()
+    public function close($force = false)
     {
         if( $this->logger )
         {
@@ -59,7 +59,7 @@ class PgsqlProxyConnection extends \Quartz\Connection\PgsqlConnection
                 $this->logger->debug("rolling back transaction $tr");
             }
         }
-        parent::close();
+        parent::close($force);
     }
 }
 
