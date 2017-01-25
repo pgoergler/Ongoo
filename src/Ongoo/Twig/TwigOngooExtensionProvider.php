@@ -61,7 +61,11 @@ class TwigOngooExtensionProvider implements \Silex\ServiceProviderInterface
                 });
 
         $twig = $app['twig'];
-        $twig->addFunction('url_for', new \Twig_Function_Function('\url_for'), array('is_safe', 'html'));
+        $urlFor = new \Twig_SimpleFunction('url_for', function ($name, $params = array())
+        {
+            return \Ongoo\Helper\Helpers\UrlHelper::urlFor($name, $params);
+        });
+        $twig->addFunction($urlFor, array('is_safe', 'html'));
         $filter = new \Twig_SimpleFilter('json_decode', function ($string, $asArray = true)
                 {
                     return json_decode($string, $asArray);
