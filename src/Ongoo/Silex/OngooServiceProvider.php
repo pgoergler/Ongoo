@@ -14,11 +14,6 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
 
     public function boot(Application $app)
     {
-        if ($app->offsetExists('error_handler') && $app['error_handler'] !== null)
-        {
-            set_error_handler($app['error_handler']);
-        }
-        
         $app['resolver'] = $app->extend('resolver', function ($resolver, $app) {
             return new \Ongoo\Controllers\ControllerResolver($app, $resolver, new \Ongoo\Controllers\CallbackResolver($app));
         });
@@ -42,43 +37,6 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
         $app['configuration']->load(array('Databases' => $databases));
         $app['configuration']->append(array('Loggers' => $loggers), true);
         $app['configuration']->append($globalConfig, true);
-
-        if ($app->offsetExists('logger') && $app['logger'] !== null)
-        {
-            $app['error_handler'] = $app->protect(function($errno, $errstr, $errfile, $errline) use(&$app)
-                    {
-                        if (!(error_reporting() & $errno))
-                        {
-                            // This error code is not included in error_reporting
-                            return;
-                        }
-
-                        switch ($errno)
-                        {
-                            case E_ERROR:
-                            case E_USER_ERROR:
-                                $app['logger']->error("[$errno] In $errfile at $errline : $errstr");
-                                break;
-                            case E_NOTICE:
-                            case E_USER_NOTICE:
-                                $app['logger']->notice("[$errno] In $errfile at $errline : $errstr");
-                                break;
-                            case E_WARNING:
-                            case E_USER_WARNING:
-                                $app['logger']->warning("[$errno] In $errfile at $errline : $errstr");
-                                break;
-                            case E_DEPRECATED:
-                                $app['logger']->info("[DEPRECATED] In $errfile at $errline : $errstr");
-                                break;
-                            case E_STRICT:
-                                $app['logger']->alert("[STRICT] In $errfile at $errline : $errstr");
-                                break;
-                            default:
-                                $app['logger']->critical("[$errno] In $errfile at $errline : $errstr");
-                                break;
-                        }
-                    });
-        }
 
         $app['bundles.menu'] = array();
         $app['bundles'] = array();
