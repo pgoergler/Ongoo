@@ -2,61 +2,23 @@
 
 namespace Ongoo\Twig;
 
-use Silex\Application;
+use Pimple\Container;
 
 /**
  * Description of TwigOngooExtensionProvider
  *
  * @author paul
  */
-class TwigOngooExtensionProvider implements \Silex\ServiceProviderInterface
+class TwigOngooExtensionProvider implements \Pimple\ServiceProviderInterface
 {
 
-    public function boot(Application $app)
+    public function boot(Container $app)
     {
         
     }
 
-    public function register(Application $app)
+    public function register(Container $app)
     {
-        $urlHelper = \Ongoo\Helper\Helper::use_helper('UrlHelper', $app);
-        $app['ongoo.helper.url'] = function() use(&$urlHelper) {
-            return $urlHelper;
-        };
-
-        $app['ongoo.helper.html'] = function() use(&$app) {
-            $helper = \Ongoo\Helper\Helper::use_helper('HtmlHelper', $app);
-
-            $defaultCss = array(
-                'media' => 'all',
-                'type' => 'text/css',
-            );
-            foreach (\Ongoo\Core\Configuration::getInstance()->get('Ongoo.web.css', array()) as $k => $css)
-            {
-                if (is_array($css))
-                {
-                    $conf = array_merge($defaultCss, $css);
-                    $css = $k;
-                    $helper->css($css, $conf['media'], $conf['type']);
-                } else
-                {
-                    $helper->css($css);
-                }
-            }
-
-            foreach (\Ongoo\Core\Configuration::getInstance()->get('Ongoo.web.js', array()) as $js)
-            {
-                $helper->js($js);
-            }
-
-            foreach (\Ongoo\Core\Configuration::getInstance()->get('Ongoo.web.link', array()) as $link)
-            {
-                $helper->addLink($link['rel'], $link['href'], $link['type'], isset($link['media']) ? $link['media'] : null);
-            }
-
-            return $helper;
-        };
-
         $twig = $app['twig'];
         $urlFor = new \Twig_SimpleFunction('url_for', function ($name, $params = array()) {
             return \Ongoo\Helper\Helpers\UrlHelper::urlFor($name, $params);

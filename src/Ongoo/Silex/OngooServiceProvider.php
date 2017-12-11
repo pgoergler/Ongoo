@@ -2,24 +2,24 @@
 
 namespace Ongoo\Silex;
 
-use Silex\Application;
+use Pimple\Container;
 
 /**
  * Description of OngooServiceProvider
  *
  * @author paul
  */
-class OngooServiceProvider implements \Silex\ServiceProviderInterface
+class OngooServiceProvider implements \Pimple\ServiceProviderInterface
 {
 
-    public function boot(Application $app)
+    public function boot(Container $app)
     {
         $app['resolver'] = $app->extend('resolver', function ($resolver, $app) {
             return new \Ongoo\Controllers\ControllerResolver($app, $resolver, new \Ongoo\Controllers\CallbackResolver($app));
         });
     }
 
-    public function register(Application $app)
+    public function register(Container $app)
     {
         if (!$app->OffsetExists('application.mode'))
         {
