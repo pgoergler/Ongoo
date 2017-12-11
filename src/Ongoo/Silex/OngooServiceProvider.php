@@ -29,10 +29,9 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
         $globalConfig = \Ongoo\Utils\ArrayUtils::merge(include(__CONFIG_DIR . '/config.php'), $app['application.mode']);
         $loggers = \Ongoo\Utils\ArrayUtils::merge(include(__CONFIG_DIR . '/loggers.php'), $app['application.mode']);
 
-        $app['configuration'] = $app->share(function()
-                {
-                    return \Ongoo\Core\Configuration::getInstance();
-                });
+        $app['configuration'] = function() {
+            return \Ongoo\Core\Configuration::getInstance();
+        };
 
         $app['configuration']->load(array('Databases' => $databases));
         $app['configuration']->append(array('Loggers' => $loggers), true);
@@ -41,76 +40,73 @@ class OngooServiceProvider implements \Silex\ServiceProviderInterface
         $app['bundles.menu'] = array();
         $app['bundles'] = array();
 
-        $app['bundle.register'] = $app->protect(function($bundle, $mainBundle = false, $alias = null, $include_routes = true) use (&$app)
+        $app['bundle.register'] = $app->protect(function($bundle, $mainBundle = false, $alias = null, $include_routes = true) use (&$app) {
+            $bundlePath = $app['dir_apps'] . '/' . $bundle;
+            if ($include_routes && $app->offsetExists('bundle.include_routes') && $app['bundle.include_routes'])
+            {
+                $routes = $bundlePath . '/config/routes.php';
+                if (is_file($routes))
                 {
-                    $bundlePath = $app['dir_apps'] . '/' . $bundle;
-                    if ($include_routes && $app->offsetExists('bundle.include_routes') && $app['bundle.include_routes'])
-                    {
-                        $routes = $bundlePath . '/config/routes.php';
-                        if (is_file($routes))
-                        {
-                            include_once($routes);
-                        }
-                    }
+                    include_once($routes);
+                }
+            }
 
-                    if ($app->offsetExists('twig') && $app['twig'])
-                    {
-                        $views = $bundlePath . '/Views';
-                        if (is_dir($views))
-                        {
-                            $app['twig.loader.filesystem']->addPath($views, "$bundle");
-                            if ($mainBundle)
-                            {
-                                $app['twig.loader.filesystem']->addPath($views, "main");
-                            }
-
-                            if ($alias)
-                            {
-                                $app['twig.loader.filesystem']->addPath($views, "$alias");
-                            }
-                        }
-                    }
-
-                    $configFile = $bundlePath . '/config/config.php';
-                    if (file_exists($configFile))
-                    {
-                        $app['configuration']->append(\Ongoo\Utils\ArrayUtils::merge(include($configFile), $app['application.mode']), true);
-                    }
-
-                    $bootstrapFile = $bundlePath . '/config/bootstrap.php';
-                    if (file_exists($bootstrapFile))
-                    {
-                        include_once($bootstrapFile);
-                    }
-                    $bundles = $app['bundles'];
-                    $bundles[$bundle] = true;
-                    $app['bundles'] = $bundles;
-                });
-
-
-        $app['bundle.is_registered'] = $app->protect(function($bundle) use (&$app)
+            if ($app->offsetExists('twig') && $app['twig'])
+            {
+                $views = $bundlePath . '/Views';
+                if (is_dir($views))
                 {
-                    return isset($app['bundles'][$bundle]) && $app['bundles'][$bundle] ? true : false;
-                });
-
-        $app['bundle.register.menu'] = $app->protect(function($bundle, $path = null) use (&$app)
-                {
-                    if ($path == null)
+                    $app['twig.loader.filesystem']->addPath($views, "$bundle");
+                    if ($mainBundle)
                     {
-                        $path = $app['dir_apps'] . '/' . $bundle . '/config/menu.php';
+                        $app['twig.loader.filesystem']->addPath($views, "main");
                     }
 
-                    if (file_exists($path))
+                    if ($alias)
                     {
-                        $array = $app['bundles.menu'];
-                        $array[$bundle] = $path;
-                        $app['bundles.menu'] = $array;
-                    } else
-                    {
-                        echo $path;
+                        $app['twig.loader.filesystem']->addPath($views, "$alias");
                     }
-                });
-        if(class_exists('\OngooUtils\OngooUtils') )
+                }
+            }
+
+            $configFile = $bundlePath . '/config/config.php';
+            if (file_exists($configFile))
+            {
+                $app['configuration']->append(\Ongoo\Utils\ArrayUtils::merge(include($configFile), $app['application.mode']), true);
+            }
+
+            $bootstrapFile = $bundlePath . '/config/bootstrap.php';
+            if (file_exists($bootstrapFile))
+            {
+                include_once($bootstrapFile);
+            }
+            $bundles = $app['bundles'];
+            $bundles[$bundle] = true;
+            $app['bundles'] = $bundles;
+        });
+
+
+        $app['bundle.is_registered'] = $app->protect(function($bundle) use (&$app) {
+            return isset($app['bundles'][$bundle]) && $app['bundles'][$bundle] ? true : false;
+        });
+
+        $app['bundle.register.menu'] = $app->protect(function($bundle, $path = null) use (&$app) {
+            if ($path == null)
+            {
+                $path = $app['dir_apps'] . '/' . $bundle . '/config/menu.php';
+            }
+
+            if (file_exists($path))
+            {
+                $array = $app['bundles.menu'];
+                $array[$bundle] = $path;
+                $app['bundles.menu'] = $array;
+            } else
+            {
+                echo $path;
+            }
+        });
+        if (class_exists('\OngooUtils\OngooUtils'))
         {
             \OngooUtils\OngooUtils::getInstance()->setInjector($app);
         }
