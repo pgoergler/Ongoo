@@ -12,8 +12,8 @@
         "twig/twig": "1.x-dev",
         "symfony/config": "3.*",
         "symfony/console": "3.*",
-        "ongoo/ongoo-utils": "~1.*",
-        "ongoo/onyx": "~2.*"
+        "ongoo/ongoo-utils": "1.*",
+        "ongoo/onyx": "2.*"
     },
     "autoload": {"psr-0": {"Ongoo": "src"}}
 }
