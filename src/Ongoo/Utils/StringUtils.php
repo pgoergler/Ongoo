@@ -161,7 +161,7 @@ class StringUtils
                 $val *= 1024;
             case 'm':
             case 'mb':
-                $val *= 1024;
+                $val = (float)$val * (float)1024;
             case 'k':
             case 'kb':
                 $val *= 1024;
