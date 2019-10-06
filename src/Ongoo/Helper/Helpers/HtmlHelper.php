@@ -19,12 +19,15 @@ namespace Ongoo\Helper\Helpers
         protected function buildRootUrl()
         {
             $ctx = $this->app['request_context'];
-            $uri = $ctx->getScheme() . '://' . $ctx->getHost();
-            if ($ctx->getScheme() == 'http' && $ctx->getHttpPort() != 80)
+            if ($ctx->getHttpsPort() == 443) {
+                $uri = 'https://' . $ctx->getHost();
+            } else if ($ctx->getScheme() == 'http' && $ctx->getHttpPort() != 80)
             {
+                $uri = $ctx->getScheme() . '://' . $ctx->getHost();
                 $uri .= ':' . $ctx->getHttpPort();
             } else if ($ctx->getScheme() == 'https' && $ctx->getHttpsPort() != 443)
             {
+                $uri = $ctx->getScheme() . '://' . $ctx->getHost();
                 $uri .= ':' . $ctx->getHttpsPort();
             }
 
